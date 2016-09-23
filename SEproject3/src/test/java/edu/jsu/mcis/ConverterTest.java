@@ -2,7 +2,6 @@ package edu.jsu.mcis;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-
 import java.io.*;
 import java.util.*;
 import org.json.simple.parser.JSONParser;
@@ -17,12 +16,15 @@ public class ConverterTest {
         try {
             jsonString = Converter.loadFile("src/test/resources/grades.json");
             csvString = Converter.loadFile("src/test/resources/grades.csv");
-        } catch(IOException exception) {exception.printStackTrace();}
+        } catch(IOException exception) {
+            exception.printStackTrace();
+        }
     }
     
     @Test
     public void testConvertCSVtoJSON() {
-        assertTrue(Converter.jsonStringsAreEqual(Converter.csvToJson(csvString), jsonString));
+        String jsonStringTwo = Converter.csvToJson(csvString);
+        assertTrue(Converter.jsonStringsAreEqual(jsonString, jsonStringTwo));
     }
 
     @Test

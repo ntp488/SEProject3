@@ -13,8 +13,15 @@ public class ConverterKeywords {
         return Converter.jsonToCsv(json);
     }
     
-    public boolean jsonStringsAreEqual(String s, String t) {
-        //return Converter.jsonStringsAreEqual(s, t);
+    public boolean jsonStringsAreEqual(String s, String t) {        
+    JSONParser parser = new JSONParser();
+    try {
+        Object sObj = parser.parse(s);
+        Object tObj = parser.parse(t);
+        return sObj.equals(tObj);
+    }
+    catch(ParseException e) {
         return false;
     }
+}
 }

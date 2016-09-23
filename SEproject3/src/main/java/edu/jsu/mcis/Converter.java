@@ -7,6 +7,7 @@ import org.json.simple.*;
 import org.json.simple.parser.*;
 
 public class Converter {
+    public static JSONObject jsonObj;
     
     public static String loadFile(String path) throws IOException {
         File inputFile = new File(path);
@@ -22,7 +23,7 @@ public class Converter {
     
     @SuppressWarnings("unchecked")
     public static String csvToJson(String csvString) {
-        JSONObject jsonObj = new JSONObject();
+        jsonObj = new JSONObject();
         
         JSONArray colHeaders = new JSONArray();
         colHeaders.add("Total");
@@ -48,14 +49,16 @@ public class Converter {
                 JSONArray dataRow = new JSONArray();
                 
                 rowHeaders.add(input[0]);
-                dataRow.add(new Double(input[1]));
-                dataRow.add(new Double(input[2]));
-                dataRow.add(new Double(input[3]));
-                dataRow.add(new Double(input[4]));
+                dataRow.add(new Integer(input[1]));
+                dataRow.add(new Integer(input[2]));
+                dataRow.add(new Integer(input[3]));
+                dataRow.add(new Integer(input[4]));
                 data.add(dataRow);
             }
         } catch(IOException exception) {
+            exception.printStackTrace();
         }
+        
         return jsonObj.toString();
     }
     
@@ -80,9 +83,6 @@ public class Converter {
                 "\""+ (String) rowHeaders.get(i) + "\"," +
                 Converter.<Double>joinArray((JSONArray) rowData.get(i)) + "\n"
             );
-            //if (i < numOfHeaders - 1) {
-            //    csvContent += "\n";
-            //}
         }
         return csvContent;
     }
@@ -98,49 +98,16 @@ public class Converter {
         }
         return ouput;
     }
-
-    public static boolean jsonStringsAreEqual(String a, String b) {
+    
+    public static boolean jsonStringsAreEqual(String s, String t) {        
+        JSONParser parser = new JSONParser();
         try {
-            return jsonEqaul(new JSONParser().parse(a), new JSONParser().parse(b));
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            Object sObj = parser.parse(s);
+            Object tObj = parser.parse(t);
+            return sObj.equals(tObj);
+        }
+        catch(ParseException e) {
             return false;
-        }
-    }
-
-    private static boolean jsonEqaul(Object a, Object b) {
-        if (a instanceof JSONObject && b instanceof JSONObject) {
-            return jsonObjectEqaul((JSONObject) a, (JSONObject) b);
-        } else if (a instanceof JSONArray && b instanceof JSONArray) {
-            return jsonArrayEqaul((JSONArray) a, (JSONArray) b);
-        } else {
-            return a.equals(b);
-        }
-    }
-    
-    private static boolean jsonObjectEqaul(JSONObject a, JSONObject b) {
-        for (Object k : a.keySet()) {
-            String key = (String) k;
-
-            if (!b.containsKey(key) || !jsonEqaul(a.get(key), b.get(key))) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    private static boolean jsonArrayEqaul(JSONArray a, JSONArray b) {
-        int aSize = a.size();
-
-        if (aSize != b.size()) {
-            return false;
-        } else {
-            for (int i = 0, il = aSize; i < il; i++) {
-                if (!jsonEqaul(a.get(i), b.get(i))) {
-                    return false;
-                }
-            }
-            return true;
         }
     }
 }
